@@ -40,6 +40,8 @@ func connectToRedis() error {
 
 	redis_addr := os.Getenv("REDIS_ADDR")
 
+	fmt.Println("The redis address is: ", redis_addr)
+
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     redis_addr, // Redis server address
 		Password: "",         // Password, if any
