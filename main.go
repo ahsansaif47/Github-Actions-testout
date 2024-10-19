@@ -8,10 +8,13 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/hashicorp/vault/api"
 )
 
 var (
-	RedisC *redis.Client
+	RedisC  *redis.Client
+	VaultC  *api.Client
+	VaultKV *api.KVv2
 )
 
 func Handler_foo(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +61,52 @@ func connectToRedis() error {
 	fmt.Println("Successfully connected to Redis")
 	RedisC = rdb
 	return nil
+}
+
+// Connect to Vault
+func connectToVault() error {
+
+	vault_addr := os.Getenv("VAULT_ADDR")
+	vault_token := os.Getenv("VAULT_TOKEN")
+
+	fmt.Printf("Vault Address: %s, Vault Token: %s", vault_addr, vault_token)
+
+	config := api.DefaultConfig()
+	config.Address = vault_addr
+
+	client, err := api.NewClient(config)
+	if err != nil {
+		return fmt.Errorf("failed to create Vault client: %v", err)
+	}
+
+	client.SetToken(vault_token)
+
+	VaultC = client
+
+	fmt.Println("Successfully connected to Vault")
+	return nil
+}
+
+// Add a key-value pair to Vault
+func addSecretToVault(key string, value map[string]interface{}) error {
+	_, err := VaultC.KVv2("secret").Put(context.Background(), key, value)
+	if err != nil {
+		return fmt.Errorf("failed to add secret to Vault: %s", err.Error())
+	}
+
+	fmt.Printf("Successfully added secret '%s'\n", key)
+	return nil
+}
+
+// Get a key-value pair from Vault
+func getSecretFromVault(key string) (map[string]interface{}, error) {
+	secret, err := VaultC.KVv2("secret").Get(context.Background(), key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve secret: %v", err)
+	}
+
+	fmt.Printf("Successfully retrieved secret '%v' for '%s'\n", secret.Data, key)
+	return secret.Data, nil
 }
 
 // Add a key-value pair to Redis
@@ -123,9 +172,25 @@ func main() {
 
 	deleteKeyValue("foo")
 
-	mux := setupRouter()
+	// Connect to Vault
+	err = connectToVault()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-	println("Mux initialized sucessfully!!")
-	_ = mux
+	if err := addSecretToVault("foo", map[string]interface{}{"super_secret": "bar"}); err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	if _, err := getSecretFromVault("foo"); err != nil {
+		fmt.Println("Error: ", err.Error())
+	}
+
+	// mux := setupRouter()
+
+	// println("Mux initialized sucessfully!!")
+	// _ = mux
 	// log.Fatalln(http.ListenAndServe(":8080", mux))
 }

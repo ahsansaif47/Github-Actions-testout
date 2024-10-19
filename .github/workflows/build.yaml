@@ -57,7 +57,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y redis-tools
 
-      - name: Run Redis Check Script
+      - name: Run Services Check Script
         run: |
           bash .github/workflows/scripts/check_services_availability.sh
 
