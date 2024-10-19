@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-redis/redis/v8"
@@ -73,5 +72,7 @@ func main() {
 
 	mux := setupRouter()
 
-	log.Fatalln(http.ListenAndServe(":8080", mux))
+	println("Mux initialized sucessfully!!")
+	_ = mux
+	// log.Fatalln(http.ListenAndServe(":8080", mux))
 }
