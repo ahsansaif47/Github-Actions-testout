@@ -39,5 +39,14 @@ jobs:
     #   REDIS_PORT: ${{ github.job.services.redis.ports[6379] }}
 
     steps:
-      - name:
+      - name: Checkout code
         uses: "actions/checkout@v4"
+
+      - name: Setup Go
+        uses: "actions/setup-go@v5"
+
+      - name: Complite Code
+        run: |
+          go mod download
+          go mod tidy
+          go run main.go

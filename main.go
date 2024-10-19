@@ -49,15 +49,6 @@ func connectToRedis() error {
 	return nil
 }
 
-func main() {
-	err := connectToRedis()
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		fmt.Println("Redis connection established successfully.")
-	}
-}
-
 // type Server struct {
 // 	Mux *http.ServeMux
 // }
@@ -72,6 +63,14 @@ func setupRouter() *http.ServeMux {
 }
 
 func main() {
+
+	err := connectToRedis()
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Redis connection established successfully.")
+	}
+
 	mux := setupRouter()
 
 	log.Fatalln(http.ListenAndServe(":8080", mux))
