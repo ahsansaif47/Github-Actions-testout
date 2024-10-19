@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -31,10 +32,13 @@ func Handler_bar(w http.ResponseWriter, r *http.Request) {
 func connectToRedis() error {
 	var ctx = context.Background()
 	// Set up Redis options, adjust according to your Redis configuration
+
+	redis_addr := os.Getenv("REDIS_ADDR")
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis server address
-		Password: "",               // Password, if any
-		DB:       0,                // Default DB
+		Addr:     redis_addr, // Redis server address
+		Password: "",         // Password, if any
+		DB:       0,          // Default DB
 	})
 
 	// Ping the Redis server
