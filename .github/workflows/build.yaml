@@ -17,16 +17,26 @@ jobs:
       redis:
         image: redis:alpine
         ports:
-          - 6937:6937
-        options: >
-          ""
+          - 6379:6379
 
-      vault:
-        image: hashicorp/vault:latest
-        ports:
-          - 8200:8200
-        options: >
-          ""
+          # Set health checks to wait until redis has started
+        options: >-
+          --entrypoint redis-server
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    #   vault:
+    #     image: hashicorp/vault:latest
+    #     ports:
+    #       - 8200:8200
+    #     options: >
+    #       ""
+
+    # env:
+    #   REDIS_HOST: redis
+    #   REDIS_PORT: ${{ github.job.services.redis.ports[6379] }}
 
     steps:
       - name:
