@@ -58,7 +58,7 @@ jobs:
 
       - name: Run Redis Check Script
         run: |
-          .github\workflows\scripts\check_services_availability.sh
+          .github/workflows/scripts/check_services_availability.sh
 
       - name: Compile Code
         run: |
