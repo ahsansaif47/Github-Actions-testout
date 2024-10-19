@@ -5,8 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis/v8"
+)
+
+var (
+	RedisC *redis.Client
 )
 
 func Handler_foo(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +35,7 @@ func Handler_bar(w http.ResponseWriter, r *http.Request) {
 }
 
 func connectToRedis() error {
-	var ctx = context.Background()
+	ctx := context.Background()
 	// Set up Redis options, adjust according to your Redis configuration
 
 	redis_addr := os.Getenv("REDIS_ADDR")
@@ -49,6 +54,42 @@ func connectToRedis() error {
 	}
 
 	fmt.Println("Successfully connected to Redis")
+	RedisC = rdb
+	return nil
+}
+
+// Add a key-value pair to Redis
+func addKeyValue(key string, value string, expiration time.Duration) error {
+	ctx := context.Background()
+
+	err := RedisC.Set(ctx, key, value, expiration).Err()
+	if err != nil {
+		return fmt.Errorf("failed to set key-value pair: %v", err)
+	}
+
+	fmt.Printf("Successfully added key '%s' with value '%s'\n", key, value)
+	return nil
+}
+
+// Delete a key-value pair from Redis
+func deleteKeyValue(key string) error {
+	ctx := context.Background()
+	err := RedisC.Del(ctx, key).Err()
+	if err != nil {
+		return fmt.Errorf("failed to delete key '%s': %v", key, err)
+	}
+	fmt.Printf("Successfully deleted key '%s'\n", key)
+	return nil
+}
+
+// Delete a key-value pair from Redis
+func getKeyValue(key string) error {
+	ctx := context.Background()
+	val, err := RedisC.Get(ctx, key).Result()
+	if err != nil {
+		return fmt.Errorf("failed to get key '%s'", key)
+	}
+	fmt.Printf("Successfully retrieved key value pair '%s' : '%s'\n", key, val)
 	return nil
 }
 
@@ -73,6 +114,12 @@ func main() {
 	} else {
 		fmt.Println("Redis connection established successfully.")
 	}
+
+	addKeyValue("foo", "bar", time.Duration(0))
+
+	getKeyValue("foo")
+
+	deleteKeyValue("foo")
 
 	mux := setupRouter()
 
