@@ -40,7 +40,7 @@ jobs:
           --cap-add=IPC_LOCK
           --env VAULT_DEV_ROOT_TOKEN_ID=root
           --env VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
-          --entrypoint /bin/sh -c "vault server -dev"
+        #   --entrypoint /bin/sh -c "vault server -dev"
 
     steps:
       - name: Checkout code
