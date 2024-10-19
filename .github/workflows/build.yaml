@@ -1,0 +1,33 @@
+name: test-github-actions-services
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6937:6937
+        options: >
+          ""
+
+      vault:
+        image: hashicorp/vault:latest
+        ports:
+          - 8200:8200
+        options: >
+          ""
+
+    steps:
+      - name:
+        uses: "actions/checkout@v4"

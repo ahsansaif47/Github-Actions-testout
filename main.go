@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/go-redis/redis/v8"
 )
 
 func Handler_foo(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +29,35 @@ func Handler_bar(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("bar"))
 }
 
+func connectToRedis() error {
+	var ctx = context.Background()
+	// Set up Redis options, adjust according to your Redis configuration
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379", // Redis server address
+		Password: "",               // Password, if any
+		DB:       0,                // Default DB
+	})
+
+	// Ping the Redis server
+	status := rdb.Ping(ctx)
+	err := status.Err()
+	if err != nil {
+		return fmt.Errorf("failed to connect to Redis: %v", err)
+	}
+
+	fmt.Println("Successfully connected to Redis")
+	return nil
+}
+
+func main() {
+	err := connectToRedis()
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Redis connection established successfully.")
+	}
+}
+
 // type Server struct {
 // 	Mux *http.ServeMux
 // }
@@ -40,5 +73,6 @@ func setupRouter() *http.ServeMux {
 
 func main() {
 	mux := setupRouter()
+
 	log.Fatalln(http.ListenAndServe(":8080", mux))
 }
