@@ -31,4 +31,4 @@ function check_cache_is_up() {
 
 
 check_cache_is_up
-# check_vault_is_running
+check_vault_is_running

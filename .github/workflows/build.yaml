@@ -36,6 +36,7 @@ jobs:
         image: hashicorp/vault:latest
         ports:
           - 8200:8200
+
         options: >-
           --cap-add=IPC_LOCK
           --env VAULT_DEV_ROOT_TOKEN_ID=root
