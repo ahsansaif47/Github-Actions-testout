@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -190,7 +191,7 @@ func main() {
 
 	// Getting one of the vaules populated earlier!!
 	if _, err := getSecretFromVault("super-secret", "foo"); err != nil {
-		fmt.Println("Error: ", err.Error())
+		log.Fatal("Error: ", err.Error())
 	}
 
 	// mux := setupRouter()
