@@ -101,6 +101,7 @@ func addSecretToVault(mount, key string, value map[string]interface{}) error {
 
 // Get a key-value pair from Vault
 func getSecretFromVault(mount, key string) (map[string]interface{}, error) {
+	// Use KVv2 to interact with Vault
 	secret, err := VaultC.KVv2(mount).Get(context.Background(), key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve secret: %v", err)
