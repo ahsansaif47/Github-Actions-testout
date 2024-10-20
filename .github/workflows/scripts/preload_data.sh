@@ -17,10 +17,10 @@ function install_vault_cli() {
 function preload_vault_secrets() {
     
     # Enable KV secrets engine at the specified path
-    vault secrets enable -path=super-secret kv || echo "KV already enabled, skipping..."
+    vault secrets enable -version=2 -path=super-secret kv || echo "KV already enabled, skipping..."
     
     # # Store DB_URL
-    if vault kv put -mount=super-secret foo super-secret=bar; then
+    if vault kv put -mount=super-secret foo super-secret=BAar; then
         echo "Successfully stored super-secret"
         vault kv get -mount=super-secret foo
     else
