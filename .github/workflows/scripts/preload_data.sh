@@ -27,7 +27,7 @@ function preload_vault_secrets() {
     #     echo "Failed to store super-secret" || exit
     # fi
     
-    vault write super-secret/data/foo super-secret=bar
+    vault write super-secret/foo super-secret=bar
     vault kv get -mount=super-secret foo
     
     
