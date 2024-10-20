@@ -20,14 +20,14 @@ function preload_vault_secrets() {
     vault secrets enable -path=super-secret kv || echo "KV already enabled, skipping..."
     
     # # Store DB_URL
-    # if vault kv put -mount=super-secret foo super-secret=$1; then
-    #     echo "Successfully stored super-secret"
-    #     vault kv get -mount=super-secret foo
-    # else
-    #     echo "Failed to store super-secret" || exit
-    # fi
+    if vault kv put -mount=super-secret foo super-secret=bar; then
+        echo "Successfully stored super-secret"
+        vault kv get -mount=super-secret foo
+    else
+        echo "Failed to store super-secret" || exit
+    fi
     
-    vault write super-secret/foo super-secret=bar
+    # vault write super-secret/foo super-secret=bar
     vault kv get -mount=super-secret foo
     
     
