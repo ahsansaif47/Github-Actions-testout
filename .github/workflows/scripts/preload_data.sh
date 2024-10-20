@@ -33,6 +33,10 @@ function preload_vault_secrets() {
     
     
     vault kv list super-secret
+    
+    echo "Listing secrets in detial :))"
+    vault secrets list -detailed
+    
 }
 
 install_vault_cli
