@@ -101,14 +101,19 @@ func addSecretToVault(mount, key string, value map[string]interface{}) error {
 
 // Get a key-value pair from Vault
 func getSecretFromVault(mount, key string) (map[string]interface{}, error) {
-	// Use KVv2 to interact with Vault
-	secret, err := VaultC.KVv2(mount).Get(context.Background(), key)
+	// Forcefully check the API path
+	secret, err := VaultC.Logical().Read(fmt.Sprintf("%s/data/%s", mount, key))
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve secret: %v", err)
 	}
 
-	fmt.Printf("Successfully retrieved secret '%v' for '%s'\n", secret.Data, key)
-	return secret.Data, nil
+	if secret == nil || secret.Data["data"] == nil {
+		return nil, fmt.Errorf("secret not found at %s", fmt.Sprintf("%s/data/%s", mount, key))
+	}
+
+	data := secret.Data["data"].(map[string]interface{})
+	fmt.Printf("Successfully retrieved secret '%v' for '%s'\n", data, key)
+	return data, nil
 }
 
 // Add a key-value pair to Redis
