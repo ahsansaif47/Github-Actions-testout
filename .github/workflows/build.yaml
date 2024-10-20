@@ -61,6 +61,10 @@ jobs:
         run: |
           bash .github/workflows/scripts/check_services_availability.sh
 
+      - name: Preload Data
+        run: |
+          bash .github/workflows/scripts/preload_data.sh
+
       - name: Compile Code
         run: |
           go mod download

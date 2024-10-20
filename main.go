@@ -88,8 +88,8 @@ func connectToVault() error {
 }
 
 // Add a key-value pair to Vault
-func addSecretToVault(key string, value map[string]interface{}) error {
-	_, err := VaultC.KVv2("secret").Put(context.Background(), key, value)
+func addSecretToVault(mount, key string, value map[string]interface{}) error {
+	_, err := VaultC.KVv2(mount).Put(context.Background(), key, value)
 	if err != nil {
 		return fmt.Errorf("failed to add secret to Vault: %s", err.Error())
 	}
@@ -99,8 +99,8 @@ func addSecretToVault(key string, value map[string]interface{}) error {
 }
 
 // Get a key-value pair from Vault
-func getSecretFromVault(key string) (map[string]interface{}, error) {
-	secret, err := VaultC.KVv2("secret").Get(context.Background(), key)
+func getSecretFromVault(mount, key string) (map[string]interface{}, error) {
+	secret, err := VaultC.KVv2(mount).Get(context.Background(), key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve secret: %v", err)
 	}
@@ -179,12 +179,17 @@ func main() {
 		return
 	}
 
-	if err := addSecretToVault("foo", map[string]interface{}{"super_secret": "bar"}); err != nil {
+	if err := addSecretToVault("secret", "foo", map[string]interface{}{"super-secret": "bar"}); err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	if _, err := getSecretFromVault("foo"); err != nil {
+	if _, err := getSecretFromVault("secret", "foo"); err != nil {
+		fmt.Println("Error: ", err.Error())
+	}
+
+	// Getting one of the vaules populated earlier!!
+	if _, err := getSecretFromVault("super-secret", "foo"); err != nil {
 		fmt.Println("Error: ", err.Error())
 	}
 
