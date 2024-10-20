@@ -21,14 +21,14 @@ function preload_vault_secrets() {
     
     # Store DB_URL
     if vault kv put -mount=super-secret foo super-secret=$1; then
-        echo "Successfully stored DATABASE_URL"
+        echo "Successfully stored super-secret"
     else
         echo "Failed to store super-secret"
     fi
     
     
     
-    vault kv list secrets
+    vault kv list super-secret
 }
 
 install_vault_cli
